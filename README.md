@@ -1,3 +1,4 @@
+![monaco with lsp](https://media.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fastbge8jidzrv7c6jex2.PNG)
 # So, you want to set up a Monaco editor with a language server
 Currently it's not simple to connect an LSP language server to a custom editor (not Neovim and VSCode), the docs are usually sparse and there is lack of simple and documented projects that implement that.
 I faced this, and decided to dive down and document my way, so I hope this post helps anyone.
