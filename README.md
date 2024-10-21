@@ -1,15 +1,15 @@
 ![monaco with lsp](https://media.dev.to/dynamic/image/width=1000,height=420,fit=cover,gravity=auto,format=auto/https%3A%2F%2Fdev-to-uploads.s3.amazonaws.com%2Fuploads%2Farticles%2Fastbge8jidzrv7c6jex2.PNG)
 # So, you want to set up a Monaco editor with a language server
-Currently it's not simple to connect an LSP language server to a custom editor (not Neovim and VSCode), the docs are usually sparse and there is lack of simple and documented projects that implement that.
-I faced this, and decided to dive down and document my way, so I hope this post helps anyone.
+Currently, it's not simple to connect an LSP language server to a custom editor (not Neovim and VSCode), the docs are usually sparse and there is a lack of simple and documented projects that implement that.
+I faced this and decided to document my journey, so I hope this post helps anyone.
 
-In this post I will cover:
+In this post, I will cover the following:
 - Basics of monaco-editor
 - Using monaco-editor with several editor windows
 - Using monaco-vscode-api package and setting up the basic language features
 - Adding monaco-languageclient and Python LSP
 
-I tried to document all the sources along the way, so you can go and learn more where needed.
+I tried to document all the sources along the way so you can learn more where needed.
 
 <!-- TOC start (generated with https://github.com/derlin/bitdowntoc) -->
 
@@ -29,9 +29,9 @@ I tried to document all the sources along the way, so you can go and learn more 
 <!-- TOC --><a name="simple-monaco-editor"></a>
 ## Simple monaco-editor
 Let's start with the most simple Monaco setup. I will use vanilla TS with Vite and Bun as package manager, so I hope it will be simple to extrapolate into different frameworks. 
-You can also find [similar example](https://github.com/microsoft/monaco-editor/tree/main/samples/browser-esm-vite-react) written with React in the official repo.
+You can also find [a similar example](https://github.com/microsoft/monaco-editor/tree/main/samples/browser-esm-vite-react) written with React in the official repo.
 
-**Feel free to skip this part if you already know about basic monaco-editor setup.**
+**Feel free to skip this part if you already know about the basic monaco-editor setup.**
 
 <!-- TOC --><a name="initial-project"></a>
 ### Initial project
@@ -57,7 +57,7 @@ Then, all we need is a simple html page with one `div` -- it will be the editor.
 </html>
 ```
 
-Add little style:
+Add a little style:
 
 ```css
 /* style.css */
@@ -72,7 +72,7 @@ body {
 }
 ```
 
-And now we can create a Monaco editor instance, which will automatically fill the div with interactive editor:
+Now we can create a Monaco editor instance, which will automatically fill the div with the interactive editor:
 
 ```typescript
 // main.ts
@@ -84,7 +84,7 @@ monaco.editor.create(document.getElementById('editor')!, {
 });
 ```
 
-Voila! Working Monaco editor is here.
+Voila! The working Monaco editor is here.
 
 ![Basic Monaco setup](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/08xwuqpydvsjgkg9kur1.png)
 
@@ -92,10 +92,10 @@ Voila! Working Monaco editor is here.
 ### Adding workers
 If you look into the DevTools console, you may notice a warning:
 
-> Could not create web worker(s). Falling back to loading web worker code in main thread, which might cause UI freezes. Please see https://github.com/microsoft/monaco-editor#faq
+> Could not create web worker(s). Falling back to loading web worker code in the main thread, which might cause UI freezes. Please see https://github.com/microsoft/monaco-editor#faq
 
 
-That's because Monaco editor usually separates text processing and UI interaction into different processes, so they work asynchronously without interfering with each other.
+That's because the Monaco editor usually separates text processing and UI interaction into different processes, so they work asynchronously without interfering with each other.
 
 One can do it manually, like this:
 
@@ -115,14 +115,14 @@ monaco.editor.create(document.getElementById('editor')!, {
 });
 ```
 
-We can provide workers for text processing using `window.MonacoEnvironment` attribute. The getWorker function receives `label` - which is the name of a worker required by editor. Since currently we do not use any languages, the default `editorWorker` will do. 
+We can provide workers for text processing using the `window.MonacoEnvironment` attribute. The getWorker function receives `label` - which is the name of a worker required by the editor. Since currently we do not use any languages, the default `editorWorker` will do. 
 
-Now everything works and there is no any warnings in the console.
+Now everything works and there are no warnings in the console.
 
 <!-- TOC --><a name="adding-languages"></a>
 ### Adding languages
 
-Now, since Monaco is code editor, let's add some coding language processing. This can be done by adding `language` attribute to the options object in `monaco.editor.create` call:
+Now, since Monaco is a code editor, let's add some coding language processing. This can be done by adding the `language` attribute to the options object in the `monaco.editor.create` call:
 
 ```typescript
 // main.ts
@@ -154,7 +154,7 @@ monaco.editor.create(document.getElementById('editor')!, {
 	language: "typescript"
 });
 ```
-We need first to check, which worker is requested, and then return the corresponding one. When we create an editor with given `language`, the Monaco calls getWorker, providing `language` as `label` parameter. 
+We need first to check, which worker is requested, and then return the corresponding one. When we create an editor with a given `language`, Monaco calls getWorker, providing `language` as a `label` parameter. 
 
 However, this is true only [for some subset of languages](https://stackoverflow.com/questions/57921084/where-is-the-monaco-editor-autocompletion-located?rq=3), which are built into Monaco by default:
 - json
@@ -163,7 +163,7 @@ However, this is true only [for some subset of languages](https://stackoverflow.
 - typescript
 - javascript
 
-For other languages Monaco provides less features out of the box and uses the default `editorWorker`. So if your editor is only for Python, you can leave just `editorWorker` in the `getWorkter` function, but still, provide `language: "python"` when creating an editor:
+For other languages, Monaco provides fewer features out of the box and uses the default `editorWorker`. So if your editor is only for Python, you can leave just `editorWorker` in the `getWorker` function, but still, provide `language: "python"` when creating an editor:
 
 ```typescript
 // main.ts
@@ -232,9 +232,9 @@ monaco.editor.create(document.getElementById('editor2')!, {
 });
 ```
 
-This will work, but not ideally -- Monaco will try to autocomplete variable names from different editor:
-![Monaco autocomplete from different editor](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ygplt4fo36amjlefzts9.png)
-It's easy to fix, just add `wordBasedSuggestions` field set to `currentDocument`:
+This will work, but not ideally -- Monaco will try to autocomplete variable names from different editors:
+![Monaco autocomplete from the different editor](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/ygplt4fo36amjlefzts9.png)
+It's easy to fix, just add the `wordBasedSuggestions` field set to `currentDocument`:
 
 ```typescript
 monaco.editor.create(document.getElementById('editor2')!, {
@@ -250,7 +250,7 @@ That was the basic possible setup of `monaco-editor`. If you are using it for Ty
 ## VSCode-API
 Let's try to build a Monaco editor with full LSP functionality for Python.
 
-Unfortunately, support for LSP is not built in natively to Monaco, so you can't just do something like:
+Unfortunately, support for LSP is not built-in natively in Monaco, so you can't just do something like:
 ```typescript
 // main.ts
 import './style.css'
@@ -281,7 +281,7 @@ However, most of the language servers work with VSCode out of the box via extens
 
 Package [monaco-vscode-api](https://github.com/CodinGame/monaco-vscode-api) does exactly that. But moreover, it in some way redesigns the `monaco-editor`, making it much more modular (but also more complex).
 
-The documentation on it is not very good (some info in the README and examples in issues and the demo). So, mostly I've figured it all out via trial and error and 3 issues focused on struggle of implementing the basic functionality:
+The documentation on it is not very good (some info in the README and examples in issues and the demo). So, mostly I've figured it all out via trial and error and 3 issues focused on the struggle of implementing the basic functionality:
 - [# Minimal example #444](https://github.com/CodinGame/monaco-vscode-api/issues/444)
 - [# Minimal example with extension support #465](https://github.com/CodinGame/monaco-vscode-api/issues/465)
 - [# I have officially spent four hours of my lifespan to set a color theme. #510](https://github.com/CodinGame/monaco-vscode-api/issues/510)
@@ -290,7 +290,7 @@ The documentation on it is not very good (some info in the README and examples i
 It changes the code drastically, but some main concepts are the same. Let's start again with a minimal example to demonstrate that.
 
 <!-- TOC --><a name="new-beginning"></a>
-### New beginning
+### New Beginning
 
 Let's create a new project in the same way as before, but instead of `monaco-editor` we will install `monaco-vscode-api` packages
 ```shell
@@ -303,7 +303,7 @@ bun add vscode@npm:@codingame/monaco-vscode-api
 bun add monaco-editor@npm:@codingame/monaco-vscode-editor-api
 bun add -D @types/vscode
 ```
-These packages names may look weird, because they use aliases to be used as enhanced drop-in replacement for `vscode` and `monaco-editor` packages. They change their functionality to allow the usage of VSCode services and extensions in Monaco, but provide the same interface as the original packages.
+These package names may look weird because they use aliases to be used as enhanced drop-in replacements for `vscode` and `monaco-editor` packages. They change their functionality to allow the usage of VSCode services and extensions in Monaco but provide the same interface as the original packages.
 
 Then, again, all we need is a simple html page with one `div` -- it will be the editor.
 
@@ -317,7 +317,7 @@ Then, again, all we need is a simple html page with one `div` -- it will be the 
 </html>
 ```
 
-Add little style:
+Add a little style:
 
 ```css
 /* style.css */
@@ -379,12 +379,12 @@ monaco.editor.create(document.getElementById('editor')!, {
 });
 
 ```
-It's basically the same, but more strictly checks if the required worker is implemented. Also, the worker initialization is a little different but still functionally same - `TextEditorWorker` is label for the default `editorWorker` from the previous examples.
+It's basically the same, but more strictly checks if the required worker is implemented. Also, the worker initialization is a little different but still functionally the same - `TextEditorWorker` is a label for the default `editorWorker` from the previous examples.
 
 There are some nuances to account for in your bundler. They are described in the [Troubleshooting section](https://github.com/CodinGame/monaco-vscode-api?tab=readme-ov-file#troubleshooting) of the repo. Since I'm using Vite here, I'll provide details for Vite users below.
 
 {% details For Vite users %}
-It uses `import.meta.url` base which doesn't work well with Vite out of the box. So if you are using Vite, add this to your `vite.config.ts` (create it if not yet):
+It uses the `import.meta.url` base which doesn't work well with Vite out of the box. So if you are using Vite, add this to your `vite.config.ts` (create it if not yet):
  ```typescript
  import type { UserConfig } from 'vite'
  import importMetaUrlPlugin from '@codingame/esbuild-import-meta-url-plugin'
@@ -406,7 +406,7 @@ bun add @codingame/esbuild-import-meta-url-plugin
 Further, I will use the latter approach to worker initialization so the reader is more used to the notation usually met in the repo. Also, we will know if any worker is not added properly via error in the console.
 <!-- TOC --><a name="adding-language"></a>
 ### Adding language
-So, we've built a basic text editor using new `monaco-vscode-api` as a drop-in replacement for `monaco-editor`. Let's try to add Python highlighting. Previously, it was made by adding `language` attribute to the `monaco.editor.create` options object.
+So, we've built a basic text editor using the new `monaco-vscode-api` as a drop-in replacement for `monaco-editor`. Let's try to add Python highlighting. Previously, it was made by adding a `language` attribute to the `monaco.editor.create` options object.
 
 However, if we add `language`,  nothing changes and even the highlighting is absent:
 
@@ -438,16 +438,16 @@ monaco.editor.create(document.getElementById('editor')!, {
 
 ```
 ![Monaco with no highlighting](https://dev-to-uploads.s3.amazonaws.com/uploads/articles/nldo5ix9jqetcqdc7uab.png)
-That's because the default workers which supplied most of the functions doesn't work in `monaco-vscode-api` the same way they did in `monaco-editor`. Now, the most of the editor functionality is based on **VSCode services** - components which provide specific functions, even the basic ones. Here is [a large list of services](https://github.com/CodinGame/monaco-vscode-api?tab=readme-ov-file#monaco-standalone-services), supported by `monaco-vscode-api`. And to make this functionality work, one need to add appropriate services manually.
+That's because the default workers which supplied most of the functions don't work in `monaco-vscode-api` the same way they did in `monaco-editor`. Now, most of the editor functionality is based on **VSCode services** - components which provide specific functions, even the basic ones. Here is [a large list of services](https://github.com/CodinGame/monaco-vscode-api?tab=readme-ov-file#monaco-standalone-services), supported by `monaco-vscode-api`. To make this functionality work, one needs to add appropriate services manually.
 
 E.g. to support highlighting, now we need to add the following services:
 
 - **Textmate**: `@codingame/monaco-vscode-textmate-service-override`
-	- Allows to use textmate grammars to tokenize languages for highlighting.
+	- Allows to use TextMate grammars to tokenize languages for highlighting.
 - **Themes**: `@codingame/monaco-vscode-theme-service-override`
-    - Allows to use VSCode themes. Note: original Monaco themes are different from VSCode themes in this package. VSCode themes are represented and installed as VSCode extensions. Also, see [# I have officially spent four hours of my lifespan to set a color theme. #510](https://github.com/CodinGame/monaco-vscode-api/issues/510) issue for details.
+    - Allows to use VSCode themes. Note: Original Monaco themes are different from VSCode themes in this package. VSCode themes are represented and installed as VSCode extensions. Also, see [# I have officially spent four hours of my lifespan to set a color theme. #510](https://github.com/CodinGame/monaco-vscode-api/issues/510) issue for details.
 - **Languages**: `@codingame/monaco-vscode-languages-service-override`
-    - Allows to account for the `language` field and setup textmate grammars for highlighting and other language specific functions.
+    - Allows to account for the `language` field and set up TextMate grammars for highlighting and other language-specific functions.
 And import the corresponding language and theme extensions (see below).
 
 
@@ -456,7 +456,7 @@ Let's try this.
 
 Installing packages for services and extensions:
 ```shell
-# splitted into several commands for readibility
+# split into several commands for readability
 bun add @codingame/monaco-vscode-textmate-service-override 
 bun add @codingame/monaco-vscode-theme-service-override 
 bun add @codingame/monaco-vscode-languages-service-override
@@ -509,7 +509,7 @@ monaco.editor.create(document.getElementById('editor')!, {
 This will work without any warnings or errors, but the highlighting is not there yet. To add it, we need to finally integrate 
 1) Python language default extension which will provide Python grammar; 
 2) TextMate worker which will tokenize the code based on the grammar; 
-3) Theme, so different keywords can have unique color.
+3) Theme, so different keywords can have unique colors.
 
 Python language and theme are both VSCode extensions. Installation of extensions [described in detail in README.md](https://github.com/CodinGame/monaco-vscode-api?tab=readme-ov-file#vscode-api-usage). Fortunately, for default VSCode extensions like the ones we need, there are prebuilt packages by the repo's authors:
 - `@codingame/monaco-vscode-python-default-extension` for Python
@@ -537,7 +537,7 @@ const workerLoaders: Partial<Record<string, WorkerLoader>> = {
 
 {% details How to find necessary services and/or extensions? %}
 You can find a full list of services and extensions here: https://www.npmjs.com/search?q=%40codingame%2Fmonaco-vscode-*-default-extension
-There is no full documentation so, to find out what you need you usually look into issues/demo/other projects using `monaco-vscode-api`, and copy that, or intuitively add services/extensions based on their name until it is not working. At least, I've not found better way yet.
+There is no full documentation, so to find out what you need you usually look into issues/demo/other projects using `monaco-vscode-api`, and copy that, or intuitively add services/extensions based on their name until it is not working. At least, I've not found a better way yet.
 {% enddetails %}
 And voila, the final code with Python highlighting support:
 ```typescript
@@ -587,7 +587,7 @@ Note: afaik, to turn the highlighting on you may need to manually edit your code
 
 <!-- TOC --><a name="introducing-language-server"></a>
 ## Introducing language server
-Now, let's finally add language server. For this one, we will need to use a cousin package of `monaco-vscode-api` called `monaco-languageclient` which actively utilizes the former.
+Now, let's finally add a language server. For this one, we will need to use a cousin package of `monaco-vscode-api` called `monaco-languageclient` which actively utilizes the former.
 
 We also will need a language server itself. 
 
@@ -595,16 +595,16 @@ We also will need a language server itself.
 Usually when using VSCode, you just select a language and install the corresponding language server extension from Marketplace, e.g. Pyright of Ruff for Python. Under the hood, most of these VSCode language server extensions utilize `vscode-languageclient` [api](https://github.com/microsoft/vscode-languageserver-node/blob/a561f1342ba94ad7f550cb15446f65432f5e1367/client/src/node/main.ts#L128). The API allows to launch LSP server in several ways, e.g. as a node module running in runtime provided by VSCode itself, or as a child process via runnable command.
 You can take a look at the [Pylyzer](https://github.com/mtshiba/pylyzer/blob/main/extension/src/extension.ts) Python LSP extension to see an example of usage of the API.
 
-**Note that in order to use it, you need a runtime that has access to your files.**
+**Note that to use it, you need a runtime that has access to your files.**
 
-There is a possibility to [add VSCode server to your Monaco project](https://github.com/CodinGame/monaco-vscode-api/blob/main/docs/vscode_server.md) and use it to launch language servers, however it adds additional complexity and dependency. 
-In this guide I will avoid it.
+There is a possibility to [add a VSCode server to your Monaco project](https://github.com/CodinGame/monaco-vscode-api/blob/main/docs/vscode_server.md) and use it to launch language servers, however, it adds additional complexity and dependency. 
+In this guide, I will avoid it.
 
-There are other ways to run Language Server, e.g. one can create a new language server or a wrapper for existing one with [`pygls`](https://pygls.readthedocs.io/en/latest/), to run it as Python process providing websocket server. Here is a [great guide](https://tomassetti.me/integrating-textx-and-monaco-a-non-tutorial/) with introduction to language servers and monaco language client. Other similar option but for Rust is [`tower-lsp`](https://github.com/ebkalderon/tower-lsp).
+There are other ways to run a Language Server, e.g. one can create a new language server or a wrapper for an existing one with [`pygls`](https://pygls.readthedocs.io/en/latest/), to run it as a Python process providing web socket server. Here is a [great guide](https://tomassetti.me/integrating-textx-and-monaco-a-non-tutorial/) with an introduction to language servers and Monaco language client. Another similar option but for Rust is [`tower-lsp`](https://github.com/ebkalderon/tower-lsp).
 {% enddetails %}
-Let's go with the most simple way for Python -- use [`python-lsp-server`](https://github.com/python-lsp/python-lsp-server/tree/develop), which provides websocket LSP server with all bells and whistles out of the box.  
+Let's go with the simplest way for Python -- use [`python-lsp-server`](https://github.com/python-lsp/python-lsp-server/tree/develop), which provides web socket LSP server with all bells and whistles out of the box.  
 
-The following example will be based on a [bare client example implementation](https://github.com/TypeFox/monaco-languageclient/blob/main/packages/examples/src/bare/client.ts) from the languageclient repo.
+The following example will be based on a [bare client example implementation](https://github.com/TypeFox/monaco-languageclient/blob/main/packages/examples/src/bare/client.ts) from the `monaco-languageclient` repo.
 
 To proceed, we will need to install two additional packages:
 ```shell
@@ -612,7 +612,7 @@ bun add vscode-ws-jsonrpc
 bun add monaco-languageclient
 ```
 
-Then, let's create a file `lsp-client.ts`. Here we will write initialization functions for the LSP client. There we will handle WebSocket connection with the server.
+Then, let's create a file `lsp-client.ts`. Here we will write initialization functions for the LSP client. There we will handle a web socket connection with the server.
 
 ```typescript
 // lsp-client.ts
@@ -658,9 +658,9 @@ const createLanguageClient = (messageTransports: MessageTransports): MonacoLangu
     });
 };
 ```
-The key concept here is `messageTransports` parameter in `createLanguageClient` function. It is a pair of initialized websocket reader and writer that allow to communicate with the server.
+The key concept here is the `messageTransports` parameter in the `createLanguageClient` function. It is a pair of initialized web socket reader and writer that allow to communicate with the server.
 
-Now, all we need to make it work is to run the `initWebSocketAndStartClient` function from `main.ts` providing url and port of the websocket language server:
+Now, all we need to make it work is to run the `initWebSocketAndStartClient` function from `main.ts` providing url and port of the web socket language server:
 
 ```typescript
 import '@codingame/monaco-vscode-python-default-extension';
@@ -707,7 +707,7 @@ monaco.editor.create(document.getElementById('editor')!, {
 	language: 'python'
 });
 
-// start websocket lsp client on port 5007 
+// start web socket lsp client on port 5007 
 // (you can choose any port, just make sure the server uses the same)
 initWebSocketAndStartClient("ws://localhost:5007/")
 ```
@@ -726,6 +726,6 @@ And here we go:
 <!-- TOC --><a name="where-to-go-next"></a>
 ## Where to go next
 - You can reduce the amount of boilerplate (e.g. adding services for basic functionality like themes, highlighting, etc.) by using [`monaco-editor-wrapper`](https://www.npmjs.com/package/monaco-editor-wrapper)
-- You can dive deeper into the concept of [models](https://www.npmjs.com/package/monaco-editor-wrapper) in order to better control LSP features between files in your project
+- You can dive deeper into the concept of [models](https://www.npmjs.com/package/monaco-editor-wrapper) to better control LSP features between files in your project
 - You can try to set up some nodejs-based language server like pyright or basedpyright. 
 - Look at the [examples](https://github.com/TypeFox/monaco-languageclient/tree/main?tab=readme-ov-file#examples-overview) in `monaco-languageclient` to learn more.
