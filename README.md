@@ -154,7 +154,10 @@ monaco.editor.create(document.getElementById('editor')!, {
 	language: "typescript"
 });
 ```
-We need first to check, which worker is requested, and then return the corresponding one. When we create an editor with a given `language`, Monaco calls getWorker, providing `language` as a `label` parameter. 
+We need first to check, which worker is requested, and then return the corresponding one. When we create an editor with a given `language`, Monaco calls getWorker, providing `language` as a `label` parameter. This way, we will see a highlighting and built-in LSP in work:
+
+![monaco-editor with typescript language features](https://github.com/user-attachments/assets/778cabb6-72a7-41bb-9b3c-79f466c76277)
+
 
 However, this is true only [for some subset of languages](https://stackoverflow.com/questions/57921084/where-is-the-monaco-editor-autocompletion-located?rq=3), which are built into Monaco by default:
 - json
@@ -163,7 +166,10 @@ However, this is true only [for some subset of languages](https://stackoverflow.
 - typescript
 - javascript
 
-For other languages, Monaco provides fewer features out of the box and uses the default `editorWorker`. So if your editor is only for Python, you can leave just `editorWorker` in the `getWorker` function, but still, provide `language: "python"` when creating an editor:
+For other languages, Monaco provides fewer features out of the box. 
+> [!NOTE]
+> `editorWorker` is always required for the full functionality of the editor, even if you are not using any languages.
+So if your editor is only for Python, you can leave just `editorWorker` in the `getWorker` function, but still, provide `language: "python"` when creating an editor:
 
 ```typescript
 // main.ts
@@ -405,7 +411,7 @@ bun add @codingame/esbuild-import-meta-url-plugin
 
 Further, I will use the latter approach to worker initialization so the reader is more used to the notation usually met in the repo. Also, we will know if any worker is not added properly via error in the console.
 <!-- TOC --><a name="adding-language"></a>
-### Adding language
+### Adding language highlighting
 So, we've built a basic text editor using the new `monaco-vscode-api` as a drop-in replacement for `monaco-editor`. Let's try to add Python highlighting. Previously, it was made by adding a `language` attribute to the `monaco.editor.create` options object.
 
 However, if we add `language`,  nothing changes and even the highlighting is absent:
