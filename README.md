@@ -536,7 +536,7 @@ To integrate the TextMate worker, we need to add it to the `workerLoaders` map:
 
 const workerLoaders: Partial<Record<string, WorkerLoader>> = {
 	TextEditorWorker: () => new Worker(new URL('monaco-editor/esm/vs/editor/editor.worker.js', import.meta.url), { type: 'module' }),
-	TextMateWorker: () => new Worker(new URL('monaco-editor/esm/vs/language/textmate/textmate.worker.js', import.meta.url), { type: 'module' })
+	TextMateWorker: () => new Worker(new URL('@codingame/monaco-vscode-textmate-service-override/worker', import.meta.url), { type: 'module' })
 }
 ...
 ```
@@ -562,7 +562,7 @@ import getTextMateServiceOverride from "@codingame/monaco-vscode-textmate-servic
 export type WorkerLoader = () => Worker;
 const workerLoaders: Partial<Record<string, WorkerLoader>> = {
 	TextEditorWorker: () => new Worker(new URL('monaco-editor/esm/vs/editor/editor.worker.js', import.meta.url), { type: 'module' }),
-	TextMateWorker: () => new Worker(new URL('monaco-editor/esm/vs/language/textmate/textmate.worker.js', import.meta.url), { type: 'module' })
+	TextMateWorker: () => new Worker(new URL('@codingame/monaco-vscode-textmate-service-override/worker', import.meta.url), { type: 'module' })
 }
 
 window.MonacoEnvironment = {
@@ -688,7 +688,7 @@ import getTextMateServiceOverride from "@codingame/monaco-vscode-textmate-servic
 export type WorkerLoader = () => Worker;
 const workerLoaders: Partial<Record<string, WorkerLoader>> = {
 	TextEditorWorker: () => new Worker(new URL('monaco-editor/esm/vs/editor/editor.worker.js', import.meta.url), { type: 'module' }),
-	TextMateWorker: () => new Worker(new URL('monaco-editor/esm/vs/language/textmate/textmate.worker.js', import.meta.url), { type: 'module' })
+	TextMateWorker: () => new Worker(new URL('@codingame/monaco-vscode-textmate-service-override/worker', import.meta.url), { type: 'module' })
 }
 
 window.MonacoEnvironment = {
